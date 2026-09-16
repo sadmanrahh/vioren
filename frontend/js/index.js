@@ -4,78 +4,45 @@ document.addEventListener("DOMContentLoaded", function () {
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
   navbar.classList.toggle('scrolled', window.scrollY > 40);
-});
+}, { passive: true });
 
 // Mobile nav
 const toggle = document.getElementById('navToggle');
 const navLinks = document.getElementById('navLinks');
 
 toggle.addEventListener('click', () => {
-  navLinks.classList.toggle('open');
+  const isOpen = navLinks.classList.toggle('open');
+  toggle.classList.toggle('is-open', isOpen);
+  const spans = toggle.querySelectorAll('span');
+  spans[0].style.transform = isOpen ? 'translateY(6.5px) rotate(45deg)' : '';
+  spans[1].style.opacity   = isOpen ? '0' : '';
+  spans[2].style.transform = isOpen ? 'translateY(-6.5px) rotate(-45deg)' : '';
 });
 
 navLinks.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', () => navLinks.classList.remove('open'));
-});
-
-// HERO SLIDER
-const slides = document.querySelectorAll('.hero-slide');
-const dots = document.querySelectorAll('.hero-dot');
-const slideNumEl = document.getElementById('slideNum');
-
-let current = 0;
-let autoTimer;
-
-function goTo(n) {
-  slides[current].classList.remove('active');
-  dots[current].classList.remove('active');
-
-  current = (n + slides.length) % slides.length;
-
-  slides[current].classList.add('active');
-  dots[current].classList.add('active');
-
-  slideNumEl.textContent = String(current + 1).padStart(2, '0');
-}
-
-function startAuto() {
-  clearInterval(autoTimer);
-  autoTimer = setInterval(() => goTo(current + 1), 5000);
-}
-
-dots.forEach(dot => {
-  dot.addEventListener('click', () => {
-    goTo(parseInt(dot.dataset.index));
-    startAuto();
+  a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    toggle.classList.remove('is-open');
+    const spans = toggle.querySelectorAll('span');
+    spans[0].style.transform = '';
+    spans[1].style.opacity   = '';
+    spans[2].style.transform = '';
   });
 });
 
-startAuto();
-
-// FEATURE SLIDER
-const track = document.getElementById('featuresTrack');
-const cards = track.querySelectorAll('.feature-card');
-
-let featIndex = 0;
-
-function getCardWidth() {
-  return cards[0].getBoundingClientRect().width + 32;
+// HERO WORD ROTATOR
+const words = ['Automation', 'AI Systems', 'Lead Response', 'Booking Systems', 'Admin Automation'];
+const rotatorEl = document.getElementById('rotatorWord');
+let wIndex = 0;
+if (rotatorEl) {
+  setInterval(() => {
+    wIndex = (wIndex + 1) % words.length;
+    rotatorEl.style.animation = 'none';
+    void rotatorEl.offsetWidth;
+    rotatorEl.textContent = words[wIndex];
+    rotatorEl.style.animation = 'wordFade .5s cubic-bezier(.16,1,.3,1)';
+  }, 2200);
 }
-
-function updateFeatTrack() {
-  const w = getCardWidth();
-  track.style.transform = `translateX(-${featIndex * w}px)`;
-}
-
-document.getElementById('featPrev').addEventListener('click', () => {
-  featIndex = Math.max(0, featIndex - 1);
-  updateFeatTrack();
-});
-
-document.getElementById('featNext').addEventListener('click', () => {
-  featIndex = Math.min(cards.length - 1, featIndex + 1);
-  updateFeatTrack();
-});
 
 // SCROLL REVEAL
 const revealEls = document.querySelectorAll('.reveal');
@@ -90,5 +57,35 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 
 revealEls.forEach(el => observer.observe(el));
+
+// ANIMATED STAT COUNTERS
+const counters = document.querySelectorAll('[data-count]');
+
+function animateCounter(el) {
+  const target = parseFloat(el.dataset.count);
+  const suffix = el.dataset.suffix || '';
+  const duration = 1400;
+  const start = performance.now();
+
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const value = Math.round(target * eased);
+    el.textContent = value + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateCounter(e.target);
+      counterObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.4 });
+
+counters.forEach(el => counterObserver.observe(el));
 
 });
