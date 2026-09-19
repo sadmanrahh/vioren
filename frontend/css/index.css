@@ -534,7 +534,15 @@
   .industries-grid { grid-template-columns: 1fr; }
   .features-header { flex-direction: column; align-items: flex-start; }
   .section-header { flex-direction: column; align-items: flex-start; }
-  .mock-kpis { flex-direction: column; gap: .8rem; }
+  .mock-kpis { flex-direction: column; gap: .6rem; }
+  .hero-right { max-width: 400px; }
+  .hero-mock { animation: none; }
+  .mock-body { padding: 1.1rem; }
+  .mock-bars { height: 64px; gap: 6px; margin-bottom: .8rem; }
+  .mock-kpi { padding: .75rem .85rem; }
+  .mock-kpi-val { font-size: 1.15rem; }
+  .mock-chrome { padding: .7rem .9rem; }
+  .mock-chrome-title { font-size: .64rem; }
 }
 
 @media (max-width: 480px) {
@@ -542,4 +550,5 @@
   .quote-card { flex-basis: 280px; }
   .hero-actions { flex-direction: column; align-items: stretch; }
   .hero-actions .btn-grad, .hero-actions .btn-outline { justify-content: center; }
+  .hero-right { max-width: 100%; }
 }

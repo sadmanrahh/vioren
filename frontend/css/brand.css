@@ -127,6 +127,15 @@ img { display: block; max-width: 100%; }
   border-color: rgba(255,255,255,.08);
   box-shadow: 0 10px 40px rgba(6,7,13,.25);
 }
+/* A backdrop-filter on #navbar makes it the containing block for its
+   position:fixed children (the mobile menu), shrinking the full-screen
+   overlay down to the navbar's own height once scrolled. Drop the filter
+   while the menu is open — it's hidden behind the menu's own opaque
+   background anyway, so there's no visible loss. */
+#navbar:has(.nav-links.open) {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
 
 .nav-logo {
   font-family: var(--font-display);
@@ -370,7 +379,7 @@ img { display: block; max-width: 100%; }
   position: relative;
   z-index: 1;
 }
-.mock-chrome span { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.18); }
+.mock-chrome span:not(.mock-chrome-title) { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.18); flex-shrink: 0; }
 .mock-body { position: relative; z-index: 1; padding: 1.4rem; }
 .mock-bars { display: flex; align-items: flex-end; gap: 8px; height: 90px; margin-bottom: 1rem; }
 .mock-bars span { flex: 1; border-radius: 4px 4px 0 0; background: var(--grad-1); opacity: .85; }
